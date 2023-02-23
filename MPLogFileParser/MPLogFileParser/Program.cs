@@ -21,6 +21,7 @@ namespace MPLogFileParser
         {
             Reader reader = new Reader(InputFile);
             reader.Read();
+            reader.SortOutput(OutputFile);
         }
 
     }
