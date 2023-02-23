@@ -13,11 +13,23 @@ namespace MPLogFileParser
     {
         private string _inputFile;
         private string _outputFile;
+        private bool _filtDateTime;
+        private int[] _dateTimeFrom;
+        private int[] _dateTimeTo;
         public MainWindow()
         {
             InitializeComponent();
             _inputFile = txtSelectInput.Text;
             _outputFile = txtSelectOutput.Text;
+            if (chkDateTime.IsChecked == true) 
+            { 
+                _filtDateTime = true; 
+                
+            }
+            _dateTimeFrom = new int[4];
+            _dateTimeTo = new int[4];
+
+
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -51,16 +63,13 @@ namespace MPLogFileParser
 
         private void chkDateTime_CheckChanged(object sender, RoutedEventArgs e)
         {
-            if (chkDateTime.IsChecked == true)
-            {
-                txtDateTimeFrom.IsEnabled = true;
-                txtDateTimeTo.IsEnabled = true;
-            }
-            else
-            {
-                txtDateTimeFrom.IsEnabled = false;
-                txtDateTimeTo.IsEnabled = false;
-            }
+            bool b = false;
+            if (chkDateTime.IsChecked == true) { b = true; }
+
+            txtDateTimeFrom.IsEnabled = b;
+            txtDateTimeTo.IsEnabled = b;
+            _filtDateTime = b;
+
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
@@ -93,9 +102,9 @@ namespace MPLogFileParser
                 return "Invalid output directory specified.";
             if (chkDateTime.IsChecked == true)
             {
-                if (!ValidateDateTime(txtDateTimeFrom.Text))
+                if (!ValidateDateTime(txtDateTimeFrom.Text, _dateTimeFrom))
                     return "Invalid DateTime From specified.";
-                if (!ValidateDateTime(txtDateTimeTo.Text))
+                if (!ValidateDateTime(txtDateTimeTo.Text, _dateTimeTo))
                     return "Invalid DateTime To specified.";
             }
 
@@ -103,7 +112,7 @@ namespace MPLogFileParser
 
         }
 
-        private bool ValidateDateTime(string dateTime)
+        private bool ValidateDateTime(string dateTime, int[] dateTimeVals)
         {
             //define DateTime validation checks
             int[] min = { 0, 0, 0, 0 };
@@ -124,6 +133,7 @@ namespace MPLogFileParser
                     return false;
                 if (o < min[i] || o > max[i])
                     return false;
+                dateTimeVals[i] = o;
             }
 
             return true;
