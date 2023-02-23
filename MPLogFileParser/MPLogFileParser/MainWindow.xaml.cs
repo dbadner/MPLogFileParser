@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
 
@@ -60,6 +49,20 @@ namespace MPLogFileParser
                 
         }
 
+        private void chkDateTime_CheckChanged(object sender, RoutedEventArgs e)
+        {
+            if (chkDateTime.IsChecked == true)
+            {
+                txtDateTimeFrom.IsEnabled = true;
+                txtDateTimeTo.IsEnabled = true;
+            }
+            else
+            {
+                txtDateTimeFrom.IsEnabled = false;
+                txtDateTimeTo.IsEnabled = false;
+            }
+        }
+
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             App.Current.Shutdown();
@@ -67,10 +70,73 @@ namespace MPLogFileParser
 
         private void btnParse_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
-            var Parser = new Parser(_inputFile, _outputFile);
-            Parser.ParserMain();
+            string val = ValidationChecks();
+            if (val == "")
+            {
+                this.Close();
+                var Parser = new Parser(_inputFile, _outputFile);
+                Parser.ParserMain();
+            }
+            else
+            {
+                var result = MessageBox.Show(val, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+            }
             
+        }
+
+        private string ValidationChecks()
+        {
+            //Purpose: runs validation checks on all fields on the form
+            if (!File.Exists(_inputFile))
+                return "Invalid input file specified.";
+            if (!Directory.Exists(Path.GetDirectoryName(_outputFile)))
+                return "Invalid output directory specified.";
+            if (chkDateTime.IsChecked == true)
+            {
+                if (!ValidateDateTime(txtDateTimeFrom.Text))
+                    return "Invalid DateTime From specified.";
+                if (!ValidateDateTime(txtDateTimeTo.Text))
+                    return "Invalid DateTime To specified.";
+            }
+
+            return "";
+
+        }
+
+        private bool ValidateDateTime(string dateTime)
+        {
+            //define DateTime validation checks
+            int[] min = { 0, 0, 0, 0 };
+            int[] max = { 31, 23, 59, 59 };
+            int numVal = 4;
+            int[] numChar = { 1, 2 };
+
+            //perform checks
+            string[] dateTimeArr = dateTime.Split(":");
+            if (dateTimeArr.Length != numVal)
+                return false;
+            for (int i = 0; i < numVal; i++)
+            {
+                if (dateTimeArr[i].Length < numChar[0] || dateTimeArr[i].Length > numChar[1])
+                    return false;
+                int o;
+                if (!int.TryParse(dateTimeArr[i], out o))
+                    return false;
+                if (o < min[i] || o > max[i])
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void txtSelectInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _inputFile = txtSelectInput.Text;
+        }
+
+        private void txtSelectOutput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _outputFile = txtSelectOutput.Text;
         }
     }
 }

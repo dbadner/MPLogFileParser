@@ -3,12 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Documents;
-using System.Diagnostics;
+
 
 namespace MPLogFileParser
 {
@@ -32,60 +28,35 @@ namespace MPLogFileParser
 
         public void Read()
         {
-            //method variables
-            //const int bufferSize = 1024;
-            const int maxLines = 10000000; //Set maximum # of lines allowed by the program
-
-            //using (var fileStream = File.OpenRead(_inputFile))
-            //using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, bufferSize))
-            //{
-            //    string line;
-            //    int numLine = 0;
-            //    while ((line = streamReader.ReadLine()) != null)
-            //    {
-            //        numLine++;
-            //        if (numLine > maxLines)
-            //            throw new IndexOutOfRangeException("Maximum number of lines in input file surpassed.");
-
-            //        List<string> words = new List<string>();
-            //        words = ParseLine(line);
-            //        UpdateDictionaries(words, numLine);
-
-            //    }
-            //}
-
-            using (TextFieldParser parser = new TextFieldParser(@_inputFile))
+            TextFieldParser parser = new TextFieldParser(@_inputFile);
+            int numLine = 0;
+            parser.TextFieldType = FieldType.Delimited;
+            parser.SetDelimiters(_delimeters);
+            parser.HasFieldsEnclosedInQuotes = true;
+            while (!parser.EndOfData)
             {
-                int numLine = 0;
-                parser.TextFieldType = FieldType.Delimited;
-                //string[] delimeters = { " " };
-                parser.SetDelimiters(_delimeters);
-                parser.HasFieldsEnclosedInQuotes = true;
-                while (!parser.EndOfData)
+                numLine++;
+                //if (numLine > maxLines)
+                    //throw new IndexOutOfRangeException("Maximum number of lines in input file surpassed.");
+                //Processing row
+                string[] fields;
+                try
                 {
-                    numLine++;
-                    if (numLine > maxLines)
-                        throw new IndexOutOfRangeException("Maximum number of lines in input file surpassed.");
-                    //Processing row
-                    string[] fields;
-                    try
-                    {
-                        fields = parser.ReadFields();
-                        if (fields == null || fields.Length != 5)
-                            throw new MalformedLineException();
+                    fields = parser.ReadFields();
+                    if (fields == null)
+                        throw new MalformedLineException();
 
-                        UpdateHostLog(fields, numLine);
-                        UpdateURILog(fields, numLine);
-                    }
-                    catch (MalformedLineException)
-                    {
-                        Console.WriteLine("Line " + numLine + " contains invalid data. Skipping line.");
-                    }
+                    UpdateHostLog(fields);
+                    UpdateURILog(fields);
                 }
-            }
+                catch (MalformedLineException)
+                {
+                    Console.WriteLine("Line " + numLine + " contains invalid data. Skipping line.");
+                }
+            }  
         }
 
-        private void UpdateHostLog(string[] fields, int numLine)
+        private void UpdateHostLog(string[] fields)
         {
             //Purpose: Method adds current parsed line from the input file to _logHost dictionary
             //Args:
@@ -102,7 +73,7 @@ namespace MPLogFileParser
             }
         }
 
-        private void UpdateURILog(string[] fields, int numLine)
+        private void UpdateURILog(string[] fields)
         {
             //Purpose: Method adds current parsed line from the input file to _logURI dictionary
             //Args:
@@ -112,20 +83,23 @@ namespace MPLogFileParser
             string requestURI = fields[_inputTemplate.RequestInd];
             string returnCode = fields[_inputTemplate.ReturnCodeInd];
 
-            string[] arrRequestURI = requestURI.Split(' '); //parse request URI into 3 strings
+            if (returnCode != "200")
+                return;
 
-            if (arrRequestURI == null || arrRequestURI.Length != 3)
-                throw new MalformedLineException();
-
-            if ((arrRequestURI[0] == "GET") && (returnCode == "200"))
+            //regular expression to parse Request URI
+            var matches = Regex.Matches(requestURI, @"^(GET)\s(.+?)(\sHTTP\S+)?$");
+            if (matches.Count() > 0)
             {
-                if (_logURI.ContainsKey(arrRequestURI[1]))
-                    _logURI[arrRequestURI[1]] += 1;
+                string httpMethod = matches[0].Groups[1].Value;
+                string URI = matches[0].Groups[2].Value;
+
+                if (_logURI.ContainsKey(URI))
+                    _logURI[URI] += 1;
                 else
                 {
-                    _logURI.Add(arrRequestURI[1], 1);
+                    _logURI.Add(URI, 1);
                 }
-            }
+            }                
         }
 
         public void SortOutput(string outputFile)
