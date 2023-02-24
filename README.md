@@ -13,12 +13,38 @@ The compiled executable resides in \MPLogFileParser\MPLogFileParser\bin\Release\
 ## Using the Program
 When the program is launched, the user interface shown in the image below will appear. 
 1. Select an input web server Log File. The file must follow the format standards detailed in the subsection below. 
-2. Optionally, filter the Log File by DateTime. If this filter is used, DateTime format must follow [DD:HH:MM:SS]. 
+2. Optionally, filter the Log File by DateTime. If this filter is used, DateTime format must follow "DD:HH:MM:SS". 
 3. Specify an Output file to save results to. The output file is detailed in the subsection below. 
 4. Click Parse File to run. The interface will disappear, and the output file will be generated. 
 
 <img src="/MPLogFileParser/Resources/UserInterface.png" alt="MPLogFileParser User Interface" width="1000"/>
 
 ### Input Log File Format
+The input log must be space delimited. 
+
+Column definitions:
+1. Host making the request: A hostname when possible, otherwise the Internet address if the name could not be looked up.
+2. Date and time: Format "[DD:HH:MM:SS]", where DD is the day of the month from [1-31] and HH:MM:SS is the time of day using the 24-hour clock. 
+3. Request: Request URI given in quotes. 
+4. Return code: HTTP reply code.
+5. Return size: Number of bytes in the reply. 
+
+Examples:
+*	141.243.1.172 [29:23:53:25] "GET /Software.html HTTP/1.0" 200 1497
+*	query2.lycos.cs.cmu.edu [29:23:53:36] "GET /Consumer.html HTTP/1.0" 200 1325
+
+Notes:
+*	Multiple consecutive delimiters are not permitted.
+*	The file must not contain any header line(s).
+*	Any invalid lines will be skipped.
+
+An example input dataset is provided in 'ExampleData.zip'. 
 
 ### Output Results File Details
+The output file generates two lists, as follows:
+1. Number of accesses to webserver per host, sorted in descending order.
+2. Number of successful resource accesses by URI (only 'GET' accesses with a reply code of 200).
+
+The file is space delimited, and the two lists are separated by a blank line.
+
+An example output dataset is provided in 'ExampleData.zip'.
