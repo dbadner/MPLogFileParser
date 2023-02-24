@@ -1,20 +1,19 @@
-﻿namespace MPLogFileParser
+﻿using System.Windows;
+
+namespace MPLogFileParser
 {
     class Program
     {
         //Purpose: Main start point for the back end of the application after the UI is closed
-        //class properties
         private readonly ParseParameters _parseParam = new ParseParameters();
 
         public Program(ParseParameters parseParam) => _parseParam = parseParam;
         public void ProgramMain()
         {
-            Parser parser = new Parser(_parseParam);
-            parser.Read();
-            parser.SortOutput();
+            IO io = new IO(_parseParam);
+            io.Read();
+            if (io.SortOutput())
+                MessageBox.Show("Results successfully saved to "+_parseParam.OutputFile, "Notification", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
         }
-
-        //merge parser into Program for simplicity?
-
     }
 }

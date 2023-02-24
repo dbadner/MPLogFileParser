@@ -2,6 +2,8 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System;
+using Microsoft.VisualBasic.FileIO;
 
 namespace MPLogFileParser
 {
@@ -11,7 +13,7 @@ namespace MPLogFileParser
     public partial class MainWindow : Window
     {
         //class properties
-        private ParseParameters _parseParam = new ParseParameters();
+        private readonly ParseParameters _parseParam = new ParseParameters();
 
         public MainWindow()
         {
@@ -88,7 +90,6 @@ namespace MPLogFileParser
                 //at least one error; show messagebox and don't close form
                 var result = MessageBox.Show(val, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
             }
-
         }
 
         private string ValidationChecks()
@@ -101,40 +102,12 @@ namespace MPLogFileParser
                 return "Invalid output directory specified.";
             if (chkDateTime.IsChecked == true)
             {
-                if (!ValidateDateTime(txtDateTimeFrom.Text, _parseParam.DateTimeFrom))
+                if (!_parseParam.DateTimeFrom.SetDateTime(txtDateTimeFrom.Text))
                     return "Invalid DateTime From specified.";
-                if (!ValidateDateTime(txtDateTimeTo.Text, _parseParam.DateTimeTo))
+                if (!_parseParam.DateTimeTo.SetDateTime(txtDateTimeTo.Text))
                     return "Invalid DateTime To specified.";
             }
             return "";
         }
-
-        private bool ValidateDateTime(string dateTime, int[] dateTimeVals)
-        {
-            //Purpose: runs validation checks on DateTime textbox value
-            //Sets or updates _dateTime class properties by ref if no errors
-            //Result: true if valid, false if errors
-            ValidationProperties prop = new ValidationProperties();
-
-            //perform checks
-            string[] dateTimeArr = dateTime.Split(":");
-            if (dateTimeArr.Length != prop.numVal)
-                return false;
-            for (int i = 0; i < prop.numVal; i++)
-            {
-                int o;
-                if (!int.TryParse(dateTimeArr[i], out o))
-                    return false;
-                if (o < prop.minDateTime[i] || o > prop.maxDateTime[i])
-                    return false;
-                dateTimeVals[i] = o;
-            }
-            return true;
-        }
-
-
     }
-
-
-
 }
