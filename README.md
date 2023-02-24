@@ -19,7 +19,7 @@ When the program is launched, the user interface shown in the image below will a
 
 <img src="/MPLogFileParser/Resources/UserInterface.png" alt="MPLogFileParser User Interface" width="1000"/>
 
-### Input Log File Format
+### Input File Specifications
 The input log must be space delimited. 
 
 Column definitions:
@@ -37,10 +37,11 @@ Notes:
 *	Multiple consecutive delimiters are not permitted.
 *	The file must not contain any header line(s).
 *	Any invalid lines will be skipped.
+*	Filtering is not recommended if data spans multiple months.
 
 An example input dataset is provided in 'ExampleData.zip'. 
 
-### Output Results File Details
+### Output File Specifications
 The output file generates two lists, as follows:
 1. Number of accesses to webserver per host, sorted in descending order.
 2. Number of successful resource accesses by URI (only 'GET' accesses with a reply code of 200).
