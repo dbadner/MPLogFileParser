@@ -2,7 +2,7 @@
 
 namespace MPLogFileParser
 {
-    class Program
+    public class Program
     {
         //Purpose: Main start point for the back end of the application after the UI is closed
         private readonly ParseParameters _parseParam = new ParseParameters();

@@ -4,12 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System;
 
 
 namespace MPLogFileParser
 {
-    class IO
+    public class IO
     {
         //class properties
         private readonly ParseParameters _parseParam = new ParseParameters();
@@ -42,18 +41,26 @@ namespace MPLogFileParser
                 try { fields = parser.ReadFields(); }
                 catch (MalformedLineException) { continue; }
                 if (fields == null) { continue; }
-
-                if (_parseParam.FiltDateTime)
-                { //if filtering based on dateTime, process the DateTime string and check filters
-                    string dateTime = fields[_inputTemplate.DateTimeInd];
-                    if (dateTime.Length < 2) { continue; }
-                    dateTime = fields[_inputTemplate.DateTimeInd].Substring(1, fields[_inputTemplate.DateTimeInd].Length - 2);
-                    if (!CheckIncludeDate(dateTime, _parseParam.DateTimeFrom, _parseParam.DateTimeTo)) { continue; }
-                }
-
-                UpdateHostLog(fields);
-                UpdateURILog(fields);
+                ProcessRow(fields);
             }
+        }
+
+        public bool ProcessRow(string[] fields)
+        {
+            //Purpose: Method processes a single row of the input file and updates the dictionaries if valid
+            //Result: Returns false if error/skipped, or true if successful
+            if (_parseParam.FiltDateTime)
+            { //if filtering based on dateTime, process the DateTime string and check filters
+                string dateTime = fields[_inputTemplate.DateTimeInd];
+                if (dateTime.Length < 2) { return false; }
+                dateTime = fields[_inputTemplate.DateTimeInd].Substring(1, fields[_inputTemplate.DateTimeInd].Length - 2);
+                if (!CheckIncludeDate(dateTime, _parseParam.DateTimeFrom, _parseParam.DateTimeTo)) { return false; }
+            }
+
+            UpdateHostLog(fields);
+            UpdateURILog(fields);
+
+            return true;
         }
 
         private bool CheckIncludeDate(string dateTimeStr, CustomDateTime dateTimeFrom, CustomDateTime dateTimeTo)
@@ -86,29 +93,33 @@ namespace MPLogFileParser
             UpdateDict(ref _logHost, hostName);
         }
 
-        private void UpdateURILog(string[] fields)
+        public bool UpdateURILog(string[] fields)
         {
             //Purpose: Method adds current parsed line from the input file to _logURI dictionary
+            //if the line meets the requirements (returnCode = 200 && GET statement)
             //Args:
             //fields: array of fields parsed from current line from input file
+            //Result: false of doesn't 
 
             string requestURI = fields[_inputTemplate.RequestInd];
             string returnCode = fields[_inputTemplate.ReturnCodeInd];
 
             if (returnCode != "200")
-                return;
+                return false;
 
             //regular expression to parse Request URI
             var matches = Regex.Matches(requestURI, @"^(GET)\s(.+?)(\sHTTP\S+)?$");
-            if (matches.Count() > 0)
+            if (!(matches.Count() > 0)) {return false;}
+            else
             {
                 string URI = matches[0].Groups[2].Value;
 
                 UpdateDict(ref _logURI, URI);
             }
+            return true;
         }
 
-        private void UpdateDict(ref Dictionary<string, int> dict, string key)
+        public void UpdateDict(ref Dictionary<string, int> dict, string key)
         {
             //Purpose: Method updates by-ref dictionary dict, adds +1 if key exists, or adds new key with value = 1 if not
 
@@ -121,7 +132,7 @@ namespace MPLogFileParser
         public bool SortOutput()
         {
             //Purpose: Public method passes dictionaries to function to sort and output them
-            //Result: true if output successfully generated, false if not.
+            //Result: true if output successfully generated, false if not (file in use)
             bool validProc = SortAndOutput(_logHost, _parseParam.OutputFile, false, "Number of accesses to webserver per host:");
             if (validProc)
                 validProc = SortAndOutput(_logURI, _parseParam.OutputFile, true, "Number of successful resource accesses per URI:");

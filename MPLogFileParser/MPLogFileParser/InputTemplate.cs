@@ -1,7 +1,7 @@
 ﻿
 namespace MPLogFileParser
 {
-    class InputTemplate
+    public class InputTemplate
     {
         //Purpose: Class defined for hypothetical input template future extensibility of solution (i.e. import field mapping). 
         //class properties

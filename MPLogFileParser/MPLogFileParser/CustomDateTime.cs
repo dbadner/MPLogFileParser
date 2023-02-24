@@ -2,7 +2,7 @@
 
 namespace MPLogFileParser
 {
-    class CustomDateTime
+    public class CustomDateTime
     {
         //Purpose: Class for storing and setting custom datetime format dd:HH:mm:ss
         public DateTime CustDateTime { get; private set; } //dd:HH:mm:ss

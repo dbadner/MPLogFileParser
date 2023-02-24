@@ -8,18 +8,18 @@
         Title="MinePlan Log File Parser" Height="314" Width="825" Icon="/HxGN_Logo.png" ResizeMode="CanMinimize">
     <Grid x:Name="t">
 
-        <TextBox x:Name="txtSelectInput" HorizontalAlignment="Left" Margin="117,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="597" TextChanged="txtSelectInput_TextChanged" RenderTransformOrigin="0.383,-1.037" Height="20" VerticalScrollBarVisibility="Auto" Text="C:\Users\bade.LGS-NET\OneDrive - Hexagon\Documents\CodingChallengeExampleData\epa-http.txt"/>
+        <TextBox x:Name="txtSelectInput" HorizontalAlignment="Left" Margin="117,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="597" TextChanged="txtSelectInput_TextChanged" RenderTransformOrigin="0.383,-1.037" Height="20" VerticalScrollBarVisibility="Auto" Text=""/>
         <Button x:Name="btnSelectInput" Content="Browse" HorizontalAlignment="Left" Margin="718,24,0,0" VerticalAlignment="Top" Click="btnSelectInput_Click" Height="20" Width="42"/>
         <TextBlock x:Name="lblSelectInput" HorizontalAlignment="Left" Margin="25,25,0,0" TextWrapping="Wrap" Text="Select Log File:" VerticalAlignment="Top" Height="16" Width="95"/>
         <CheckBox x:Name="chkDateTime" Content="Filter by DateTime" HorizontalAlignment="Left" Margin="28,85,0,0" VerticalAlignment="Top" Checked="chkDateTime_CheckChanged" Unchecked="chkDateTime_CheckChanged" IsChecked="False"/>
-        <TextBox x:Name="txtDateTimeFrom" HorizontalAlignment="Left" Margin="284,85,0,0" TextWrapping="Wrap" Text="30:14:00:00" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+        <TextBox x:Name="txtDateTimeFrom" HorizontalAlignment="Left" Margin="284,85,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
         <TextBlock x:Name="lblDateTimeFrom" HorizontalAlignment="Left" Margin="189,85,0,0" TextWrapping="Wrap" Text="DateTime From:" VerticalAlignment="Top" Height="16" Width="95"/>
-        <TextBox x:Name="txtDateTimeTo" HorizontalAlignment="Left" Margin="544,85,0,0" TextWrapping="Wrap" Text="30:21:59:59" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+        <TextBox x:Name="txtDateTimeTo" HorizontalAlignment="Left" Margin="544,85,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
         <TextBlock x:Name="lblDateTimeTo" HorizontalAlignment="Left" Margin="465,85,0,0" TextWrapping="Wrap" Text="DateTime To:" VerticalAlignment="Top" Height="16" Width="95"/>
         <TextBlock x:Name="lblDateTimeFrom_Copy" HorizontalAlignment="Left" Margin="287,103,0,0" TextWrapping="Wrap" Text="[DD:HH:MM:SS]" VerticalAlignment="Top" Height="16    " Width="95" FontSize="9"/>
         <TextBlock x:Name="lblDateTimeFrom_Copy1" HorizontalAlignment="Left" Margin="550,103,0,0" TextWrapping="Wrap" Text="[DD:HH:MM:SS]" VerticalAlignment="Top" Height="16    " Width="95" FontSize="9"/>
 
-        <TextBox x:Name="txtSelectOutput" HorizontalAlignment="Left" Margin="120,179,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="597" TextChanged="txtSelectOutput_TextChanged" RenderTransformOrigin="0.383,-1.037" Height="20" VerticalScrollBarVisibility="Auto" Text="C:\Users\bade.LGS-NET\OneDrive - Hexagon\Documents\CodingChallengeExampleData\testoutput.txt"/>
+        <TextBox x:Name="txtSelectOutput" HorizontalAlignment="Left" Margin="120,179,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="597" TextChanged="txtSelectOutput_TextChanged" RenderTransformOrigin="0.383,-1.037" Height="20" VerticalScrollBarVisibility="Auto" Text=""/>
         <Button x:Name="btnSelectOutput" Content="Browse" HorizontalAlignment="Left" Margin="720,179,0,0" VerticalAlignment="Top" Click="btnSelectOutput_Click" Height="20" Width="42"/>
         <TextBlock x:Name="lblSelectOutput" HorizontalAlignment="Left" Margin="25,180,0,0" TextWrapping="Wrap" Text="Save Output As:" VerticalAlignment="Top" Height="16" Width="125"/>
         <Button x:Name="btnExit" Content="Exit" HorizontalAlignment="Left" Margin="265,235,0,0" VerticalAlignment="Top" Height="20" Width="57" Click="btnExit_Click"/>

@@ -2,7 +2,7 @@
 
 namespace MPLogFileParser
 {
-    class ParseParameters
+    public class ParseParameters
     {
         //Purpose: Class contains properties for the parsing defined by the user in the UI
         public string InputFile { get; set; }
