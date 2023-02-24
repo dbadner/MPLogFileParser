@@ -1,8 +1,7 @@
-﻿
+﻿using Microsoft.Win32;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.IO;
-using Microsoft.Win32;
 
 namespace MPLogFileParser
 {
@@ -11,30 +10,28 @@ namespace MPLogFileParser
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string _inputFile;
-        private string _outputFile;
-        private bool _filtDateTime;
-        private int[] _dateTimeFrom;
-        private int[] _dateTimeTo;
+        //class properties
+        private ParseParameters _parseParam = new ParseParameters();
+
         public MainWindow()
         {
             InitializeComponent();
-            _inputFile = txtSelectInput.Text;
-            _outputFile = txtSelectOutput.Text;
-            if (chkDateTime.IsChecked == true) 
-            { 
-                _filtDateTime = true; 
-                
+            _parseParam.InputFile = txtSelectInput.Text;
+            _parseParam.OutputFile = txtSelectOutput.Text;
+            if (chkDateTime.IsChecked == true)
+            {
+                _parseParam.FiltDateTime = true;
             }
-            _dateTimeFrom = new int[4];
-            _dateTimeTo = new int[4];
-
-
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void txtSelectInput_TextChanged(object sender, TextChangedEventArgs e)
         {
+            _parseParam.InputFile = txtSelectInput.Text;
+        }
 
+        private void txtSelectOutput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _parseParam.OutputFile = txtSelectOutput.Text;
         }
 
         private void btnSelectInput_Click(object sender, RoutedEventArgs e)
@@ -42,10 +39,10 @@ namespace MPLogFileParser
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
-                _inputFile = openFileDialog.FileName;
-                txtSelectInput.Text = _inputFile;
+                _parseParam.InputFile = openFileDialog.FileName;
+                txtSelectInput.Text = _parseParam.InputFile;
             }
-                
+
 
         }
 
@@ -55,10 +52,10 @@ namespace MPLogFileParser
             saveFileDialog.Filter = "Text file (*.txt)|*.txt";
             if (saveFileDialog.ShowDialog() == true)
             {
-                _outputFile = saveFileDialog.FileName;
-                txtSelectOutput.Text = _outputFile;
+                _parseParam.OutputFile = saveFileDialog.FileName;
+                txtSelectOutput.Text = _parseParam.OutputFile;
             }
-                
+
         }
 
         private void chkDateTime_CheckChanged(object sender, RoutedEventArgs e)
@@ -68,7 +65,7 @@ namespace MPLogFileParser
 
             txtDateTimeFrom.IsEnabled = b;
             txtDateTimeTo.IsEnabled = b;
-            _filtDateTime = b;
+            _parseParam.FiltDateTime = b;
 
         }
 
@@ -79,74 +76,65 @@ namespace MPLogFileParser
 
         private void btnParse_Click(object sender, RoutedEventArgs e)
         {
-            string val = ValidationChecks();
+            string val = ValidationChecks(); //run validation checks before continuing to parse
             if (val == "")
             {
                 this.Close();
-                var Parser = new Parser(_inputFile, _outputFile);
-                Parser.ParserMain();
+                var parser = new Program(_parseParam);
+                parser.ProgramMain();
             }
             else
             {
+                //at least one error; show messagebox and don't close form
                 var result = MessageBox.Show(val, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
             }
-            
+
         }
 
         private string ValidationChecks()
         {
             //Purpose: runs validation checks on all fields on the form
-            if (!File.Exists(_inputFile))
+            //Result: returns "" if valid, returns string with error text value if invalid
+            if (!File.Exists(_parseParam.InputFile))
                 return "Invalid input file specified.";
-            if (!Directory.Exists(Path.GetDirectoryName(_outputFile)))
+            if (!Directory.Exists(Path.GetDirectoryName(_parseParam.OutputFile)))
                 return "Invalid output directory specified.";
             if (chkDateTime.IsChecked == true)
             {
-                if (!ValidateDateTime(txtDateTimeFrom.Text, _dateTimeFrom))
+                if (!ValidateDateTime(txtDateTimeFrom.Text, _parseParam.DateTimeFrom))
                     return "Invalid DateTime From specified.";
-                if (!ValidateDateTime(txtDateTimeTo.Text, _dateTimeTo))
+                if (!ValidateDateTime(txtDateTimeTo.Text, _parseParam.DateTimeTo))
                     return "Invalid DateTime To specified.";
             }
-
             return "";
-
         }
 
         private bool ValidateDateTime(string dateTime, int[] dateTimeVals)
         {
-            //define DateTime validation checks
-            int[] min = { 0, 0, 0, 0 };
-            int[] max = { 31, 23, 59, 59 };
-            int numVal = 4;
-            int[] numChar = { 1, 2 };
+            //Purpose: runs validation checks on DateTime textbox value
+            //Sets or updates _dateTime class properties by ref if no errors
+            //Result: true if valid, false if errors
+            ValidationProperties prop = new ValidationProperties();
 
             //perform checks
             string[] dateTimeArr = dateTime.Split(":");
-            if (dateTimeArr.Length != numVal)
+            if (dateTimeArr.Length != prop.numVal)
                 return false;
-            for (int i = 0; i < numVal; i++)
+            for (int i = 0; i < prop.numVal; i++)
             {
-                if (dateTimeArr[i].Length < numChar[0] || dateTimeArr[i].Length > numChar[1])
-                    return false;
                 int o;
                 if (!int.TryParse(dateTimeArr[i], out o))
                     return false;
-                if (o < min[i] || o > max[i])
+                if (o < prop.minDateTime[i] || o > prop.maxDateTime[i])
                     return false;
                 dateTimeVals[i] = o;
             }
-
             return true;
         }
 
-        private void txtSelectInput_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            _inputFile = txtSelectInput.Text;
-        }
 
-        private void txtSelectOutput_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            _outputFile = txtSelectOutput.Text;
-        }
     }
+
+
+
 }

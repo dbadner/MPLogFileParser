@@ -1,23 +1,20 @@
-﻿
-
-namespace MPLogFileParser
+﻿namespace MPLogFileParser
 {
-    public class Parser
+    class Program
     {
-        public string InputFile { get; private set; }
-        public string OutputFile { get; private set; }
+        //Purpose: Main start point for the back end of the application after the UI is closed
+        //class properties
+        private readonly ParseParameters _parseParam = new ParseParameters();
 
-        public Parser(string inputfile, string outputfile) 
+        public Program(ParseParameters parseParam) => _parseParam = parseParam;
+        public void ProgramMain()
         {
-            InputFile = inputfile;
-            OutputFile = outputfile;
+            Parser parser = new Parser(_parseParam);
+            parser.Read();
+            parser.SortOutput();
         }
-        public void ParserMain()
-        {
-            Reader reader = new Reader(InputFile);
-            reader.Read();
-            reader.SortOutput(OutputFile);
-        }
+
+        //merge parser into Program for simplicity?
 
     }
 }

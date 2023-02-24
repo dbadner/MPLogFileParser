@@ -3,8 +3,8 @@ namespace MPLogFileParser
 {
     class InputTemplate
     {
-        //add interface?
-        //Purpose: Class defined for input template future extensibility of solution (i.e. import field mapping). 
+        //Purpose: Class defined for hypothetical input template future extensibility of solution (i.e. import field mapping). 
+        //class properties
         public int HostNameInd { get; private set; }
         public int DateTimeInd { get; private set; }
         public int RequestInd { get; private set; }
