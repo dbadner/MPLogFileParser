@@ -16,7 +16,8 @@ When the program is launched, the user interface shown in the image below will a
 2. Optionally, filter the Log File by DateTime. If this filter is used, DateTime format must follow [DD:HH:MM:SS]. 
 3. Specify an Output file to save results to. The output file is detailed in the subsection below. 
 4. Click Parse File to run. The interface will disappear, and the output file will be generated. 
-<img src="/Resources/UserInterface.png" alt="MPLogFileParser User Interface" width="1000"/>
+
+<img src="/MPLogFileParser/Resources/UserInterface.png" alt="MPLogFileParser User Interface" width="1000"/>
 
 ### Input Log File Format
 
