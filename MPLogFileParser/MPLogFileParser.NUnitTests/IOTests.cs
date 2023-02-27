@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MPLogFileParser.NUnitTests
+﻿namespace MPLogFileParser.NUnitTests
 {
     public class IOTests
     {
@@ -106,17 +100,14 @@ namespace MPLogFileParser.NUnitTests
             dict.Add(key1, 3);
             dict.Add(key2, 5);
 
-            io.UpdateDict(ref dict, key1);
+            io.UpdateDict(dict, key1);
             Assert.That(dict[key1], Is.EqualTo(4)); //confirm key1 value has increased by 1
-            Assert.That(dict[key2], Is.EqualTo(5)); //confirm key2 value has not increased
-
+            Assert.That(dict[key2], Is.EqualTo(5)); //confirm key2 value has not increased}
             //add key3, recheck all values
-            io.UpdateDict(ref dict, key3);
+            io.UpdateDict(dict, key3);
             Assert.That(dict[key1], Is.EqualTo(4));
             Assert.That(dict[key2], Is.EqualTo(5));
             Assert.That(dict[key3], Is.EqualTo(1));
         }
-
-
     }
 }

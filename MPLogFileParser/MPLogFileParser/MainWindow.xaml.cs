@@ -44,8 +44,6 @@ namespace MPLogFileParser
                 _parseParam.InputFile = openFileDialog.FileName;
                 txtSelectInput.Text = _parseParam.InputFile;
             }
-
-
         }
 
         private void btnSelectOutput_Click(object sender, RoutedEventArgs e)
@@ -82,8 +80,8 @@ namespace MPLogFileParser
             if (val == "")
             {
                 this.Close();
-                var parser = new Program(_parseParam);
-                parser.ProgramMain();
+                //var parser = new Program(_parseParam);
+                Program.ProgramMain(_parseParam);
             }
             else
             {
